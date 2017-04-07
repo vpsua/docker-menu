@@ -4,11 +4,13 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
-DockerDialog	../docker_dialog.py	/^class DockerDialog(object):$/;"	kind:class	line:12
-__init__	../docker_dialog.py	/^    def __init__(self, base_url):$/;"	kind:member	line:13
-dialog_exit	../docker_dialog.py	/^    def dialog_exit(self):$/;"	kind:member	line:27
-dialog_help	../docker_dialog.py	/^    def dialog_help(self):$/;"	kind:member	line:37
+DockerDialog	../docker_dialog.py	/^class DockerDialog(object):$/;"	kind:class	line:17
+__init__	../docker_dialog.py	/^    def __init__(self, base_url):$/;"	kind:member	line:18
+dialog_exit	../docker_dialog.py	/^    def dialog_exit(self):$/;"	kind:member	line:33
+dialog_help	../docker_dialog.py	/^    def dialog_help(self):$/;"	kind:member	line:44
 docker_dialog.py	../docker_dialog.py	1;"	kind:file	line:1
-get_variable	../docker_dialog.py	/^    def get_variable(self):$/;"	kind:member	line:45
-main	../docker_dialog.py	/^def main():$/;"	kind:function	line:83
-main_window	../docker_dialog.py	/^    def main_window(self):$/;"	kind:member	line:48
+get_bundle	../docker_dialog.py	/^    def get_bundle(self, bundle):$/;"	kind:member	line:81
+get_url	../docker_dialog.py	/^    def get_url(self, url):$/;"	kind:member	line:53
+get_variable	../docker_dialog.py	/^    def get_variable(self, param):$/;"	kind:member	line:103
+main	../docker_dialog.py	/^def main():$/;"	kind:function	line:196
+main_window	../docker_dialog.py	/^    def main_window(self):$/;"	kind:member	line:149
