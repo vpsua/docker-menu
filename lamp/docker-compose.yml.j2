@@ -1,0 +1,26 @@
+version: '2'
+
+services:
+   db:
+     image: mysql:5.7
+     volumes:
+       - db_data:/var/lib/mysql
+     restart: always
+     ports:
+       - "3306:3306"
+     environment:
+       MYSQL_ROOT_PASSWORD: {{ MYSQL_ROOT_PASSWORD }}
+
+   php:
+     build:
+       context: .
+       dockerfile: DockerfilePHP5.6
+     ports:
+       - '80:80'
+     volumes:
+       - ./html:/var/www/html
+     depends_on:
+       - db
+
+volumes:
+    db_data:

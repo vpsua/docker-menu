@@ -1,18 +1,21 @@
 ---
-lamp:
-  urls:
-    - 'lamp/docker-compose.yml.j2'
-    - 'lamp/DockerfilePHP5.6'
-  desc: 'Linux Apache MySQL PHP'
-  bundle: 'lamp/bundle.tgz'
-  vars:
-    - 'MYSQL_ROOT_PASSWORD'
+stack:
+  options:
+    lamp:
+      urls:
+        - 'lamp/docker-compose.yml.j2'
+        - 'lamp/DockerfilePHP5.6'
+      desc: 'Linux Apache MySQL PHP'
+      bundle: 'lamp/bundle.tgz'
+      vars:
+        - 'MYSQL_ROOT_PASSWORD'
 
-lemp:
-  urls:
-    - 'lemp/docker-compose.yml.j2'
-    - 'lemp/Dockerfile'
-  desc: 'Linux Nginx MySQL PHP'
-  bundle: 'lemp/bundle.tgz'
-  vars:
-    - 'MYSQL_ROOT_PASSWORD'
+    lemp:
+      urls:
+        - 'lemp/docker-compose.yml.j2'
+        - 'lemp/Dockerfile'
+      desc: 'Linux Nginx MySQL PHP'
+      bundle: 'lemp/bundle.tgz'
+      vars:
+        - 'MYSQL_ROOT_PASSWORD'
+  description: "Here you may find templates with different software stacks, like lamp, lemp, etc."
