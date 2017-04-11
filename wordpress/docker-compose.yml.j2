@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+
+  wordpress:
+    image: wordpress
+    ports:
+      - 80:80
+    environment:
+      WORDPRESS_DB_PASSWORD: {{ MYSQL_ROOT_PASSWORD }}
+
+  mysql:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: {{ MYSQL_ROOT_PASSWORD }}
+

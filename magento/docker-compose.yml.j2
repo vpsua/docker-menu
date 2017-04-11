@@ -1,0 +1,14 @@
+web:
+  image: alexcheng/magento
+  ports:
+    - "80:80"
+  links:
+    - mysql
+
+mysql:
+  image: mariadb
+  environment:
+    MYSQL_ROOT_PASSWORD: {{ MYSQL_ROOT_PASSWORD }}
+    MYSQL_DATABASE: magento_db
+    MYSQL_USER: magento
+    MYSQL_PASSWORD: {{ MYSQL_MAGENTO_PASSWORD }}

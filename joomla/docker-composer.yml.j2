@@ -1,0 +1,13 @@
+joomla:
+  image: joomla
+  ports:
+    - 80:80
+  links:
+    - joomladb:mysql
+  environment:
+    JOOMLA_DB_PASSWORD: {{ MYSQL_ROOT_PASSWORD }}
+
+joomladb:
+  image: mariadb
+  environment:
+    MYSQL_ROOT_PASSWORD: {{ MYSQL_ROOT_PASSWORD }}

@@ -59,11 +59,11 @@ You may run this script anytime with command:
         raise SystemExit(0)
 
 
-    def dialog_help(self):
+    def dialog_help(self, url='README'):
         """
         Runned in case of asking for a help. It should be read from README file
         """
-        help_msg = urlopen(urljoin(self.base_url, 'README')).read()
+        help_msg = urlopen(urljoin(self.base_url, url)).read()
         self.dialog.msgbox(
             help_msg,
             width=100,
@@ -201,7 +201,16 @@ You may run this script anytime with command:
                 insecure=True
                 )
             if exit_code == self.dialog.OK:
-                self.vars.update({param: value})
+ #               if value is not None:
+                    self.vars.update({param: value})
+ #               else:
+ #                   self.dialog.infobox(
+ #                       "Input was empty. Please, try again",
+ #                       title="Error",
+ #                       width=50
+ #                       )
+ #                   time.sleep(2)
+ #                   self.get_variable(param)
             elif exit_code == self.dialog.CANCEL:
                 self.main_window()
             else:
@@ -261,24 +270,27 @@ You may run this script anytime with command:
                 os.makedirs(self.template_directory)
 
             # checking if we have vars, that needs to be fullfield by the user
-            if self.config[self.category]['options'][self.template]['vars']:
+            if "vars" in self.config[self.category]['options'][self.template]:
                 for variable in self.config[self.category]['options'][self.template]['vars']:
                     self.get_variable(variable)
 
             self.dialog.infobox("Loading composer files", title="Loading...", height=5)
 
             # checking, if we have urls, that needs to be downloaded
-            if self.config[self.category]['options'][self.template]['urls']:
+            if "urls" in self.config[self.category]['options'][self.template]:
                 for url in self.config[self.category]['options'][self.template]['urls']:
                     self.get_url(url)
 
             # checking, if we have bundle, that needs to be downloaded
-            if self.config[self.category]['options'][self.template]['bundle']:
+            if "bundle" in self.config[self.category]['options'][self.template]:
                 self.get_bundle(self.config[self.category]['options'][self.template]['bundle'])
 
             # running docker composer
             composer_code = self.run_composer()
             if composer_code == self.dialog.OK:
+                if "help" in self.config[self.category]['options'][self.template]:
+                    self.dialog_help(url=self.config[self.category]['options'][self.template]['help'])
+
                 self.dialog_exit()
 
 

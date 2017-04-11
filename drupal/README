@@ -1,0 +1,8 @@
+Installation successfull!
+
+During Drupal installation please use following details:
+DB Host: postgres
+DB Name: drupal_db
+DB User: drupal
+DB Password: <specified password>
+

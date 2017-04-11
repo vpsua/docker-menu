@@ -1,0 +1,9 @@
+Installation successfull!
+
+During Magento installation please use following details:
+
+DB Host: mysql
+DB Name: magento_db
+DB User: magento
+DB Password: <specified magento password>
+
