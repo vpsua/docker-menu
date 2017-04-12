@@ -3,9 +3,11 @@ version: '2'
 services:
 
   wordpress:
-    image: wordpress
+    image: wordpress:latest
     ports:
       - 80:80
+    volumes:
+      - ./public_html:/var/www/html
     environment:
       WORDPRESS_DB_PASSWORD: {{ MYSQL_ROOT_PASSWORD }}
 

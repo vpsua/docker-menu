@@ -4,6 +4,8 @@ joomla:
     - 80:80
   links:
     - joomladb:mysql
+  volumes:
+    - ./public_html:/var/www/html
   environment:
     JOOMLA_DB_PASSWORD: {{ MYSQL_ROOT_PASSWORD }}
 

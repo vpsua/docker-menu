@@ -1,0 +1,36 @@
+version: '2'
+networks:
+  bridge:
+    driver: bridge
+services:
+  web:
+    # Use an already built XWiki image from DockerHub.
+    image: "xwiki:postgres-tomcat"
+    container_name: xwiki-postgres-tomcat-web
+    depends_on:
+      - db
+    ports:
+      - "80:8080"
+    # The DB_USER/DB_PASSWORD/DB_HOST variables are used in the hibernate.cfg.xml file.
+    environment:
+      - DB_USER=xwiki
+      - DB_PASSWORD={{ XWIKI_DB_PASSWORD }}
+      - DB_DATABASE=xwiki_db
+      - DB_HOST=xwiki-postgres-db
+    # Provide a name instead of an auto-generated id for the xwiki permanent directory configured in the Dockerfile,
+    # to make it simpler to identify in 'docker volume ls'.
+    networks:
+      - bridge
+  # The container that runs PostgreSQL
+  db:
+    image: "postgres:latest"
+    container_name: xwiki-postgres-db
+    environment:
+      - POSTGRES_ROOT_PASSWORD={{ ROOT_DB_PASSWORD }}
+      - POSTGRES_PASSWORD={{ XWIKI_DB_PASSWORD }}
+      - POSTGRES_USER=xwiki
+      - POSTGRES_DB=xwiki_db
+      - POSTGRES_INITDB_ARGS="--encoding=UTF8"
+    networks:
+      - bridge
+

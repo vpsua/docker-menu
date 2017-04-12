@@ -99,6 +99,7 @@ You may run this script anytime with command:
             exit_code = self.dialog.msgbox(
                 "Loading failed. Please try installation again", title="Failed!"
                 )
+
             if exit_code == self.dialog.OK:
                 self.main_window()
             else:
@@ -152,7 +153,7 @@ You may run this script anytime with command:
             cwd=self.template_directory)
         # Rendering stdout in programbox
         code = self.dialog.programbox(
-            fd=docker_compose.stdout.fileno(),
+            fd=docker_compose.stderr.fileno(),
             text="Installation progress")
         return code
 
@@ -201,16 +202,16 @@ You may run this script anytime with command:
                 insecure=True
                 )
             if exit_code == self.dialog.OK:
- #               if value is not None:
+                if value:
                     self.vars.update({param: value})
- #               else:
- #                   self.dialog.infobox(
- #                       "Input was empty. Please, try again",
- #                       title="Error",
- #                       width=50
- #                       )
- #                   time.sleep(2)
- #                   self.get_variable(param)
+                else:
+                    self.dialog.infobox(
+                        "Input was empty. Please, try again",
+                        title="Error",
+                        width=50
+                        )
+                    time.sleep(2)
+                    self.get_variable(param)
             elif exit_code == self.dialog.CANCEL:
                 self.main_window()
             else:
@@ -284,6 +285,13 @@ You may run this script anytime with command:
             # checking, if we have bundle, that needs to be downloaded
             if "bundle" in self.config[self.category]['options'][self.template]:
                 self.get_bundle(self.config[self.category]['options'][self.template]['bundle'])
+
+            if "dirs" in self.config[self.category]['options'][self.template]:
+                for folder in self.config[self.category]['options'][self.template]['dirs']:
+                    try:
+                        os.makedirs(os.path.join(self.template_directory, folder))
+                    except OSError:
+                        pass
 
             # running docker composer
             composer_code = self.run_composer()

@@ -29,6 +29,17 @@ Development:
       vars:
         - 'MYSQL_ROOT_PASSWORD'
       help: 'redmine/README'
+
+    jenkins:
+      urls:
+        - 'jenkins/docker-compose.yml.j2'
+      desc: 'Official Jenkins template'
+      vars:
+        - 'JENKINS_PORT'
+      dirs:
+        - 'jenkins_home'
+      help: 'jenkins/README'
+
   description: "Here you may find tools, which are used for work management, like Redmine, Jenkins, etc."
 
 CMS:
@@ -38,6 +49,8 @@ CMS:
       urls:
         - 'wordpress/docker-compose.yml.j2'
       desc: 'Basic Wordpress installation'
+      dirs:
+        - 'public_html'
       vars:
         - 'MYSQL_ROOT_PASSWORD'
 
@@ -45,6 +58,8 @@ CMS:
       urls:
         - 'joomla/docker-compose.yml.j2'
       desc: 'Basic Joomla installation'
+      dirs:
+        - 'public_html'
       vars:
         - 'MYSQL_ROOT_PASSWORD'
       help: 'joomla/README'
@@ -74,5 +89,13 @@ CMS:
       vars:
         - 'POSTGRES_PASSWORD'
       help: 'drupal/README'
+
+    xwiki:
+      urls:
+        - 'xwiki/docker-compose.yml.j2'
+      desc: 'XWIKI on apache SOLR and Postgres'
+      vars:
+        - 'ROOT_DB_PASSWORD'
+        - 'XWIKI_DB_PASSWORD'
 
   description: "Templates with pre-installed CMS, like WordPress or Joomla"
