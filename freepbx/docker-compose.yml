@@ -1,0 +1,5 @@
+freepbx:
+  image: jmar71n/freepbx
+  ports:
+    - 80:80
+    - 5060:5060/udp

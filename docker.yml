@@ -110,3 +110,21 @@ CMS:
         - 'XWIKI_DB_PASSWORD'
 
   description: "Templates with pre-installed CMS, like WordPress or Joomla"
+
+Utils:
+  options:
+    freepbx:
+      urls:
+        - 'freepbx/docker-compose.yml.j2'
+      desc: 'Template includes: LAMP, Asterisk, FreePBX'
+
+    softethervpn:
+      urls:
+        - 'softethervpn/docker-compose.yml.j2'
+      desc: 'USER_PASS format: user1:pass1;user2:pass2. Template with softethervpn.'
+      vars:
+        - Shared_PSK
+        - USER_PASS
+        - HUB_PASSWORD
+        - SERVER_PASSWORD
+  description: "Templates with different utils, like freepbx"

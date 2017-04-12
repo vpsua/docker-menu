@@ -1,0 +1,17 @@
+softether:
+  image: siomiz/softethervpn
+  ports:
+    - 500:500/udp
+    - 4500:4500/udp
+    - 1701:1701/tcp
+    - 1194:1194/udp
+    - 443:443/tcp
+    - 5555:5555/tcp
+    - 992:992/tcp
+  environment:
+    PSK: {{ Shared_PSK }}
+    USERS: {{ USER_PASS }}
+    SPW: {{ SERVER_PASSWORD }}
+    HPW: {{ HUB_PASSWORD }}
+  cap_add:
+    - NET_ADMIN
