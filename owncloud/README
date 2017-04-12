@@ -1,0 +1,7 @@
+Installation successfull!
+
+During ownCloud installation please select PostgreSQL database and use following details:
+DB host: postgres
+DB user: owncloud
+DB password: <provided password>
+DB name: owncloud_db

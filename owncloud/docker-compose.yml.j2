@@ -1,0 +1,19 @@
+version: '2'
+
+services:
+
+  owncloud:
+    image: owncloud:latest
+    volumes:
+      - ./public_html:/var/www/html
+    ports:
+      - 80:80
+
+  postgres:
+    image: postgres:latest
+    environment:
+      - POSTGRES_ROOT_PASSWORD={{ ROOT_DB_PASSWORD }}
+      - POSTGRES_PASSWORD={{ OWNCLOUD_DB_PASSWORD }}
+      - POSTGRES_USER=owncloud
+      - POSTGRES_DB=owncloud_db
+      - POSTGRES_INITDB_ARGS="--encoding=UTF8"

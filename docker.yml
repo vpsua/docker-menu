@@ -82,6 +82,17 @@ CMS:
         - 'MYSQL_MAGENTO_PASSWORD'
       help: 'magento2/README'
 
+    owncloud:
+      urls:
+        - 'owncloud/docker-compose.yml.j2'
+      desc: 'Basic ownCloud installation'
+      vars:
+        - ROOT_DB_PASSWORD
+        - OWNCLOUD_DB_PASSWORD
+      help: 'owncloud/README'
+      dirs:
+        - 'public_html'
+
     drupal:
       urls:
         - 'drupal/docker-compose.yml.j2'
