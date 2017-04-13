@@ -1,0 +1,19 @@
+postgres:
+  image: postgres:latest
+  volumes:
+    - ./datadir:/var/lib/postgresql/data/pgdata
+  ports:
+    - 5432:5432
+  environment:
+    POSTGRES_PASSWORD: {{ POSTGRES_PASSWORD }}
+    PGDATA: /var/lib/postgresql/data/pgdata
+    POSTGRES_INITDB_ARGS: "--encoding=UTF8"
+  restart: unless-stopped
+
+phppgadmin:
+  image: cloyne/phppgadmin
+  links:
+    - postgres:pgsql
+  ports:
+    - {{ PHPPGADMIN_PORT }}:80
+  restart: unless-stopped

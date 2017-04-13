@@ -4,10 +4,11 @@ web:
     - "80:80"
   links:
     - mysql
-  
+  restart: unless-stopped
 
 mysql:
   image: mariadb
+  restart: unless-stopped
   environment:
     MYSQL_ROOT_PASSWORD: {{ MYSQL_ROOT_PASSWORD }}
     MYSQL_DATABASE: magento_db

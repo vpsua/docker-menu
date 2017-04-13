@@ -13,7 +13,7 @@ services:
       - /var/www/html/profiles
       - /var/www/html/themes
       - /var/www/html/sites
-    restart: always
+    restart: unless-stopped
 
   postgres:
     image: postgres:latest
@@ -21,4 +21,4 @@ services:
       POSTGRES_DB: drupal_db
       POSTGRES_USER: drupal
       POSTGRES_PASSWORD: {{ POSTGRES_PASSWORD }}
-    restart: always
+    restart: unless-stopped

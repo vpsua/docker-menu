@@ -8,8 +8,11 @@ joomla:
     - ./public_html:/var/www/html
   environment:
     JOOMLA_DB_PASSWORD: {{ MYSQL_ROOT_PASSWORD }}
+  restart: unless-stopped
 
 joomladb:
   image: mariadb
   environment:
     MYSQL_ROOT_PASSWORD: {{ MYSQL_ROOT_PASSWORD }}
+  restart: unless-stopped
+ 

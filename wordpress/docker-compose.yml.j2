@@ -10,9 +10,11 @@ services:
       - ./public_html:/var/www/html
     environment:
       WORDPRESS_DB_PASSWORD: {{ MYSQL_ROOT_PASSWORD }}
+    restart: unless-stopped
 
   mysql:
     image: mariadb
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: {{ MYSQL_ROOT_PASSWORD }}
 

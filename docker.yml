@@ -7,6 +7,8 @@ Stack:
         - 'lamp/DockerfilePHP5.6'
       desc: 'Linux Apache MySQL PHP'
       bundle: 'lamp/bundle.tgz'
+      dirs:
+        - 'db_data'
       vars:
         - 'MYSQL_ROOT_PASSWORD'
 
@@ -16,6 +18,8 @@ Stack:
         - 'lemp/Dockerfile'
       desc: 'Linux Nginx MySQL PHP'
       bundle: 'lemp/bundle.tgz'
+      dirs:
+        - 'db_data'
       vars:
         - 'MYSQL_ROOT_PASSWORD'
   description: "Here you may find templates with different software stacks, like lamp, lemp, etc."
@@ -87,7 +91,6 @@ CMS:
         - 'owncloud/docker-compose.yml.j2'
       desc: 'Basic ownCloud installation'
       vars:
-        - ROOT_DB_PASSWORD
         - OWNCLOUD_DB_PASSWORD
       help: 'owncloud/README'
       dirs:
@@ -106,7 +109,6 @@ CMS:
         - 'xwiki/docker-compose.yml.j2'
       desc: 'XWIKI on apache SOLR and Postgres'
       vars:
-        - 'ROOT_DB_PASSWORD'
         - 'XWIKI_DB_PASSWORD'
 
   description: "Templates with pre-installed CMS, like WordPress or Joomla"
@@ -128,3 +130,67 @@ Utils:
         - HUB_PASSWORD
         - SERVER_PASSWORD
   description: "Templates with different utils, like freepbx"
+
+Databases:
+  options:
+
+    mariadb:
+      urls:
+        - 'mariadb/docker-compose.yml.j2'
+      desc: 'Latest MariaDB engine with phpMyAdmin'
+      dirs:
+        - 'datadir'
+      vars:
+        - MARIADB_PORT
+        - MARIADB_ROOT_PASSWORD
+        - PHPMYADMIN_PORT
+
+    mysql:
+      urls:
+        - 'mysql/docker-compose.yml.j2'
+      desc: 'Latest MySQL DB engine with phpMyAdmin.'
+      dirs:
+        - 'datadir'
+      vars:
+        - MYSQL_PORT
+        - MYSQL_ROOT_PASSWORD
+        - PHPMYADMIN_PORT
+
+    postgres:
+      urls:
+        - 'postgres/docker-compose.yml.j2'
+      desc: 'Postgres DB engine with phpPgAdmin'
+      dirs:
+        - 'datadir'
+      vars:
+        - POSTGRES_PASSWORD
+        - PHPPGADMIN_PORT
+
+    cassandra:
+      urls:
+        - 'cassandra/docker-compose.yml.j2'
+      desc: 'Cassandra single node setup'
+      dirs:
+        - 'cassandra_data'
+      vars:
+        - 'CASSANDRA_USER'
+        - 'CASSANDRA_PASSWORD'
+
+    mongodb:
+      urls:
+        - 'mongo/docker-compose.yml.j2'
+      desc: 'MongoDB document databases with MongoExpress'
+      dirs: 'datadir'
+      vars:
+        - 'MONGOEXPRESS_PORT'
+
+    redis:
+      urls:
+        - 'redis/docker-compose.yml.j2'
+      desc: 'Redis is an open source key-value store with PHPRedMin'
+      dirs: 'datadir'
+      vars:
+        - 'PHPREDMIN_PORT'
+      help: 'redis/README'
+
+  description: "Templates with different database engines"

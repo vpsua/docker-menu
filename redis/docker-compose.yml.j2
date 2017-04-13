@@ -1,0 +1,18 @@
+version: '2'
+services:
+    phpredmin:
+        image: sasanrose/phpredmin
+        environment:
+            - PHPREDMIN_DATABASE_REDIS_0_HOST=redis
+        ports:
+            - {{ PHPREDMIN_PORT }}:80
+        depends_on:
+            - redis
+        restart: unless-stopped
+    redis:
+        image: redis
+        volumes:
+          - ./datadir:/data
+        ports:
+          - 6379:6379
+        restart: unless-stopped

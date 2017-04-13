@@ -11,11 +11,11 @@ services:
       REDMINE_DB_PASSWORD: {{ MYSQL_ROOT_PASSWORD }}
     depends_on:
       - db
-    restart: always
+    restart: unless-stopped
 
   db:
     image: mariadb
     environment:
       MYSQL_ROOT_PASSWORD: {{ MYSQL_ROOT_PASSWORD }}
       MYSQL_DATABASE: redmine
-    restart: always
+    restart: unless-stopped

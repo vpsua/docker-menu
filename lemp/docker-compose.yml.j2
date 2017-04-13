@@ -4,12 +4,13 @@ services:
    db:
      image: mysql:5.7
      volumes:
-       - db_data:/var/lib/mysql
+       - ./db_data:/var/lib/mysql
      restart: always
      ports:
        - "3306:3306"
+     restart: unless-stopped
      environment:
-       MYSQL_ROOT_PASSWORD: generated
+       MYSQL_ROOT_PASSWORD: {{ MYSQL_ROOT_PASSWORD }}
 
    php:
      build:
@@ -19,8 +20,6 @@ services:
        - '80:80'
      volumes:
        - ./html:/var/www/html
+     restart: unless-stopped
      depends_on:
        - db
-
-volumes:
-    db_data:

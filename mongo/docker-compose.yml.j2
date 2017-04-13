@@ -1,0 +1,15 @@
+mongodb:
+  image: mongo:latest
+  ports:
+    - 27017:27017
+  volumes:
+    - ./datadir:/data/db
+  restart: unless-stopped
+
+mongoexpress:
+  image: mongo-express:latest
+  ports:
+    - {{ MONGOEXPRESS_PORT }}:8081
+  links:
+    - mongodb:mongo
+  restart: unless-stopped

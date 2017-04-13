@@ -1,5 +1,6 @@
 web:
   image: alexcheng/magento2
+  restart: unless-stopped
   ports:
     - "80:80"
   links:
@@ -7,6 +8,7 @@ web:
 
 mysql:
   image: mariadb
+  restart: unless-stopped
   environment:
     MYSQL_ROOT_PASSWORD: {{ MYSQL_ROOT_PASSWORD }}
     MYSQL_DATABASE: magento_db
