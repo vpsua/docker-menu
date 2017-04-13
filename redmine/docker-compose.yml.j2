@@ -3,19 +3,24 @@ version: '2'
 services:
 
   redmine:
-    image: redmine:passenger
+    build: .
     ports:
-      - 80:3000
+      - {{ REDMINE_PORT }}:3000
     environment:
       REDMINE_DB_MYSQL: db
       REDMINE_DB_PASSWORD: {{ MYSQL_ROOT_PASSWORD }}
     depends_on:
       - db
     restart: unless-stopped
+    volumes:
+      - ./public_html:/usr/src/redmine/files
 
   db:
-    image: mariadb
+    image: mariadb:latest
+    volumes:
+      - ./my.cnf:/etc/mysql/conf.d/config.cnf
     environment:
       MYSQL_ROOT_PASSWORD: {{ MYSQL_ROOT_PASSWORD }}
       MYSQL_DATABASE: redmine
     restart: unless-stopped
+

@@ -29,9 +29,15 @@ Development:
     redmine:
       urls:
         - 'redmine/docker-compose.yml.j2'
+        - 'redmine/my.cnf'
+        - 'redmine/Dockerfile'
+        - 'redmine/innodb_row_format.rb'
       desc: 'Basic Redmine CRM with Passenger'
+      dirs:
+        - 'public_html'
       vars:
         - 'MYSQL_ROOT_PASSWORD'
+        - 'REDMINE_PORT'
       help: 'redmine/README'
 
     jenkins:
