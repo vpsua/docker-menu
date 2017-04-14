@@ -50,7 +50,7 @@ class DockerDialog(object):
             """Script ends normally.
 
 You may run this script anytime with command:
-        /opt/scripts/docker_dialog.py""",
+        python2 /opt/scripts/docker_dialog.pyc""",
             title="Exiting...",
             width=50
             )
