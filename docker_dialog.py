@@ -13,7 +13,6 @@ from jinja2 import Environment
 from dialog import Dialog
 
 
-
 class DockerDialog(object):
     """
     Class, which uses dialog for rendering menu, jinja tempaltes and yaml config for starting docker containers
@@ -28,23 +27,20 @@ class DockerDialog(object):
         self.category = ""
         self.template_directory = ""
         self.base_directory = os.path.expanduser("~")
+        self.stage = 0
         self.vars = {}
         try:
             if self.dialog.yesno(
-                    "Do you want to create Docker container from the list of preinstalled images?",
-                    width=50
-                ) == self.dialog.DIALOG_OK:
-
+                "Do you want to create Docker container from the list of preinstalled images?",
+                width=50
+            ) == self.dialog.DIALOG_OK:
                 self.dialog.infobox("Loading list of templates", title="Loading...", height=5)
                 self.config = yaml.load(urlopen(urljoin(self.base_url, "docker.yml")))
-                self.category_window()
-
+                # self.category_window()
             else:
                 self.dialog_exit(manually=True)
         except KeyboardInterrupt:
             self.dialog_exit(manually=True)
-
-
 
     def dialog_exit(self, manually=False):
         """
@@ -77,6 +73,7 @@ You may run this script anytime with the command:
             os.system('clear')
             raise SystemExit(0)
         else:
+            # TODO: This part of the script will never happen...
             self.dialog.infobox(
                 """Script exits abnormally.
 
@@ -89,8 +86,6 @@ Please, contact support or try run script one more time with the command:
             os.system('clear')
             raise SystemExit(1)
 
-
-
     def dialog_help(self, url='README'):
         """
         Runned in case of asking for a help. It should be read from README file
@@ -100,7 +95,6 @@ Please, contact support or try run script one more time with the command:
             help_msg,
             width=100,
             title="Help")
-
 
     def get_url(self, url):
         """
@@ -142,7 +136,6 @@ Please, contact support or try run script one more time with the command:
             finally:
                 os.unlink(os.path.join(self.template_directory, filename))
 
-
     def get_bundle(self, bundle):
         """
         Downloads bundle and extracts it to the template directory
@@ -158,12 +151,10 @@ Please, contact support or try run script one more time with the command:
             if (
                 bundle_file.endswith("tar.gz") or bundle_file.endswith(".tgz") or
                 bundle_file.endswith("tar.bz2") or bundle_file.endswith(".tbz")
-                ):
+            ):
                 # unpacking it to the template_directory
                 with tarfile.open(bundle_path, 'r:gz') as tar_archive:
                     tar_archive.extractall(path=self.template_directory)
-
-
         except:
             try:
                 exit_code = self.dialog.msgbox(
@@ -177,7 +168,6 @@ Please, contact support or try run script one more time with the command:
                 self.dialog_exit(manually=True)
         finally:
             os.unlink(bundle_path)
-
 
     def run_composer(self):
         """
@@ -196,180 +186,243 @@ Please, contact support or try run script one more time with the command:
             text="Installation progress")
         return code
 
+    def show_value_error(self, errorid):
+        """
+        This function is used to show error message when user input is invalid
+        """
+        errormessage = {2: "Passwords does not match or input was empty. Please, try again",
+                        1: "Input was empty. Please, try again"}
+        self.dialog.infobox(
+            errormessage[errorid],
+            title="Error",
+            width=50
+        )
+        time.sleep(2)
+
     def get_variable(self, param):
         """
         Asks user to fullfill required variables
         """
         try:
-        # If it's password field, we render passwordbox and ask for a password twice
-            if re.match(r".*password.*", param, re.IGNORECASE):
-                # Asking password first time
-                exit_code, password1 = self.dialog.passwordbox(
-                    text="Please, input {0}".format(param),
-                    insecure=True
-                    )
-                if exit_code == self.dialog.OK:
-                    # Asking password second time
-                    exit_code, password2 = self.dialog.passwordbox(
-                        text="Please, input {0} one more time".format(param),
+            # If it's password field, we render passwordbox and ask for a password twice
+            asks = [1]
+            if re.match(r".*password.*", param, re.IGNORECASE): asks = [1, 2]
+            value = {}
+            stopflag = False
+            messagetext = {1: "Please, input {0}".format(param),
+                           2: "Please, input {0} one more time".format(param)}
+            while True:
+                if len(asks) > 1:
+                    msgbox = "passwordbox"
+                else:
+                    msgbox = "inputbox"
+                for i in asks:
+                    # Asking password twice and item once
+                    exit_code, value[i] = getattr(self.dialog, msgbox)(
+                        text=messagetext[i],
                         insecure=True
-                        )
-                    if exit_code == self.dialog.OK:
-                        # comparing input. If input equal - updating dict. In other case - ask again
-                        if (password1 == password2) and password1:
-                            self.vars.update({param: password2})
-                        else:
-                            self.dialog.infobox(
-                                "Passwords does not match or input was empty. Please, try again",
-                                title="Error",
-                                width=50
-                                )
-                            time.sleep(2)
-                            self.get_variable(param)
-                    elif exit_code == self.dialog.CANCEL:
-                        self.get_variable(param)
-                    else:
-                        self.dialog_exit(manually=True)
-                elif exit_code == self.dialog.CANCEL:
-                    self.main_window()
-                else:
-                    self.dialog_exit(manually=True)
-
-            else:
-                # If variable is not passsword, asking for a value in inputbox without check
-                exit_code, value = self.dialog.inputbox(
-                    text="Please, input {0}".format(param),
-                    insecure=True
                     )
-                if exit_code == self.dialog.OK:
-                    if value:
-                        self.vars.update({param: value})
-                    else:
-                        self.dialog.infobox(
-                            "Input was empty. Please, try again",
-                            title="Error",
-                            width=50
-                            )
-                        time.sleep(2)
-                        self.get_variable(param)
-                elif exit_code == self.dialog.CANCEL:
-                    self.main_window()
+                    if exit_code != self.dialog.OK:
+                        if exit_code == self.dialog.CANCEL:
+                            stopflag = True
+                            break
+                        # we don't need to exit loop as function below will
+                        # exit script itself
+                        self.dialog_exit(manually=True)
+                if stopflag: break
+
+                if value[1]:
+                    try:
+                        if value[1] == value[2]:
+                            self.vars.update({param: value[2]})
+                            break
+                        else:
+                            self.show_value_error(len(asks))
+                    except KeyError:
+                        self.vars.update({param: value[1]})
+                        break
                 else:
-                    self.dialog_exit(manually=True)
+                    self.show_value_error(len(asks))
+            if stopflag: return False
+            else: return True
         except (KeyboardInterrupt):
             self.dialog_exit(manually=True)
 
-
+    def app_window(self):
+        """
+        This window is used to select category and application
+        """
+        try:
+            # exit_code = ""
+            app_tuple = []
+            if self.stage == 0:
+                title = "Category selection"
+                dialogtext = "Please, select the matching category from the list:"
+                items = self.config.iteritems()
+                # TODO: set descriptionname the same in both functions
+                decitemname = 'description'
+            elif self.stage == 1:
+                title = "Template selection"
+                dialogtext = "Please, select the matching template from the list:"
+                items = self.config[self.category]['options'].iteritems()
+                decitemname = 'desc'
+            for key, val in items:
+                app_tuple.append((key, val[decitemname], val[decitemname]))
+            while True:
+                # display menu
+                exit_code, appcat = self.dialog.menu(
+                    text=dialogtext,
+                    choices=app_tuple,
+                    title=title,
+                    help_button=True,
+                    item_help=True
+                )
+                if exit_code == self.dialog.OK:
+                    if self.stage == 0: self.category = appcat
+                    elif self.stage == 1: self.template = appcat
+                    break
+                elif exit_code == self.dialog.HELP:
+                    self.dialog_help()
+                    continue
+                elif exit_code == self.dialog.CANCEL:
+                    break
+                else:
+                    self.dialog_exit(manually=True)
+            return exit_code
+        except (KeyboardInterrupt):
+            self.dialog_exit(manually=True)
 
     def category_window(self):
         """
         Window with category selection
         """
-        # generating list of the categories from the config
         try:
+            # generating list of the categories from the config
             category_tuple = []
             for key, val in self.config.iteritems():
                 category_tuple.append((key, val['description'], val['description']))
-
-            # display menu with category selection
-            exit_code, self.category = self.dialog.menu(
-                text="Please, select the matching category from the list:",
-                choices=category_tuple,
-                title="Category selection",
-                help_button=True,
-                item_help=True
+            while True:
+                # display menu with category selection
+                exit_code, self.category = self.dialog.menu(
+                    text="Please, select the matching category from the list:",
+                    choices=category_tuple,
+                    title="Category selection",
+                    help_button=True,
+                    item_help=True
                 )
-
-            if exit_code == self.dialog.OK:
-                self.main_window()
-
-            elif exit_code == self.dialog.HELP:
-                self.dialog_help()
-                self.category_window()
-
-            else:
-                self.dialog_exit(manually=True)
-
+                if exit_code == self.dialog.OK:
+                    break
+                elif exit_code == self.dialog.HELP:
+                    self.dialog_help()
+                    continue
+                else:
+                    self.dialog_exit(manually=True)
         except (KeyboardInterrupt):
             self.dialog_exit(manually=True)
+        return exit_code
+        # self.main_window()
 
+    def variables_input(self):
+        # checking if we have vars, that needs to be fullfield by the user
+        exit_code = []
+        print self.config
+        if "vars" in self.config[self.category]['options'][self.template]:
+            for variable in self.config[self.category]['options'][self.template]['vars']:
+                exit_code.append(self.get_variable(variable))
+                if exit_code[-1] == False: break
+        # TODO: ADD substage for the variables configuration
+        if all(exit_code): return "ok"
+        else: return "cancel"
 
+    def postinstall(self):
+        """
+        Perform installation and download necessary files
+        """
+        # Create Directories
+        self.template_directory = os.path.join(self.base_directory, self.template)
+        if not os.path.exists(self.template_directory):
+            os.makedirs(self.template_directory)
+
+        self.dialog.infobox("Loading composer files", title="Loading...", height=5)
+        # checking, if we have urls, that needs to be downloaded
+        if "urls" in self.config[self.category]['options'][self.template]:
+            for url in self.config[self.category]['options'][self.template]['urls']:
+                self.get_url(url)
+
+        # checking, if we have bundle, that needs to be downloaded
+        if "bundle" in self.config[self.category]['options'][self.template]:
+            self.get_bundle(self.config[self.category]['options'][self.template]['bundle'])
+
+        if "dirs" in self.config[self.category]['options'][self.template]:
+            for folder in self.config[self.category]['options'][self.template]['dirs']:
+                try:
+                    os.makedirs(os.path.join(self.template_directory, folder))
+                except OSError:
+                    pass
+
+        # running docker composer
+        self.run_composer()
+        try:
+            self.dialog_help(url=self.config[self.category]['options'][self.template]['help'])
+        finally:
+            self.dialog_exit()
+        pass
 
     def main_window(self):
         """
         Window with template selectionselection
         """
         try:
-            # Generating list of supported templates from the config
+            # Generating a list of supported templates from the config
             template_tuple = []
             for key, val in self.config[self.category]['options'].iteritems():
                 template_tuple.append((key, val['desc'], val['desc']))
 
-            # display matched templates from the self.category
-            exit_code, self.template = self.dialog.menu(
-                text="Please, select the matching template from the list:",
-                choices=template_tuple,
-                title="Template selection",
-                help_button=True,
-                item_help=True
-                )
+            while True:
+                # display matched templates from the self.category
+                exit_code, self.template = self.dialog.menu(
+                    text="Please, select the matching template from the list:",
+                    choices=template_tuple,
+                    title="Template selection",
+                    help_button=True,
+                    item_help=True
+                    )
 
-            if exit_code == self.dialog.OK:
-
-                self.template_directory = os.path.join(self.base_directory, self.template)
-
-                if not os.path.exists(self.template_directory):
-                    os.makedirs(self.template_directory)
-
-                # checking if we have vars, that needs to be fullfield by the user
-                if "vars" in self.config[self.category]['options'][self.template]:
-                    for variable in self.config[self.category]['options'][self.template]['vars']:
-                        self.get_variable(variable)
-
-                self.dialog.infobox("Loading composer files", title="Loading...", height=5)
-
-                # checking, if we have urls, that needs to be downloaded
-                if "urls" in self.config[self.category]['options'][self.template]:
-                    for url in self.config[self.category]['options'][self.template]['urls']:
-                        self.get_url(url)
-
-                # checking, if we have bundle, that needs to be downloaded
-                if "bundle" in self.config[self.category]['options'][self.template]:
-                    self.get_bundle(self.config[self.category]['options'][self.template]['bundle'])
-
-                if "dirs" in self.config[self.category]['options'][self.template]:
-                    for folder in self.config[self.category]['options'][self.template]['dirs']:
-                        try:
-                            os.makedirs(os.path.join(self.template_directory, folder))
-                        except OSError:
-                            pass
-
-                # running docker composer
-                composer_code = self.run_composer()
-                try:
-                    self.dialog_help(url=self.config[self.category]['options'][self.template]['help'])
-                finally:
-                    self.dialog_exit()
-
-
-            elif exit_code == self.dialog.HELP:
-                self.dialog_help()
-                self.main_window()
-
-            elif exit_code == self.dialog.CANCEL:
-                self.category_window()
-
-            else:
-                self.dialog_exit(manually=True)
+                if exit_code == self.dialog.OK:
+                    break
+                elif exit_code == self.dialog.HELP:
+                    self.dialog_help()
+                    continue
+                elif exit_code == self.dialog.CANCEL:
+                    break
+                else:
+                    self.dialog_exit(manually=True)
+            return exit_code
 
         except (KeyboardInterrupt):
             self.dialog_exit(manually=True)
 
 
-
 def main():
     base_url = "http://repo.vps.ua/docker/"
-    DockerDialog(base_url)
+    ydialog = DockerDialog(base_url)
+#    if ydialog.category_window() == "ok":
+#        ydialog.stage += 1
+    # ydialog.main_window()
 
+    while True:
+        ret_code = -1
+        # Category and app selection stage
+        if ydialog.stage == 0 or ydialog.stage == 1:
+            ret_code = ydialog.app_window()
+        # Variables input stage
+        if ydialog.stage == 2: ret_code = ydialog.variables_input()
+        # Installation stage (exits script)
+        if ydialog.stage == 3: ydialog.postinstall()
+        # Perform stage change based on return code
+        if ret_code == "ok": ydialog.stage += 1
+        else: ydialog.stage -= 1
+        # if we are trying to return from the very first stage, we should exit
+        if ydialog.stage == -1: ydialog.dialog_exit(manually=True)
 if __name__ == "__main__":
     main()

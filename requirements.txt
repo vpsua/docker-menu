@@ -1,0 +1,4 @@
+Jinja2
+pyaml
+python2-pythondialog
+PyYAML
