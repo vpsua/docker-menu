@@ -29,6 +29,8 @@ class DockerDialog(object):
         self.base_directory = os.path.expanduser("~")
         self.stage = 0
         self.vars = {}
+        self.binaries = ["docker", "docker-compose", "dialog"]
+        self.check_requirments()
         try:
             if self.dialog.yesno(
                 "Do you want to create Docker container from the list of preinstalled images?",
@@ -41,6 +43,23 @@ class DockerDialog(object):
                 self.dialog_exit(manually=True)
         except KeyboardInterrupt:
             self.dialog_exit(manually=True)
+
+    def check_requirments(self):
+        """
+        Function, that checks if required bineries exist within $PATH
+        """
+        for program in self.binaries:
+            exists = 0
+            for path in os.environ["PATH"].split(os.pathsep):
+                path = path.strip('"')
+                exe_file = os.path.join(path, program)
+                if os.path.isfile(exe_file) and os.access(exe_file, os.X_OK):
+                    exists = 1
+            if exists == 0:
+                self.dialog_exit(manually="binary")
+
+
+        return None
 
     def dialog_exit(self, manually=False):
         """
@@ -67,6 +86,18 @@ You may run this script anytime with the command:
 You may run this script anytime with the command:
                 docker-dialog""",
                 title="Exiting...",
+                width=50
+                )
+            time.sleep(5)
+            os.system('clear')
+            raise SystemExit(0)
+        elif manually == "binary":
+            self.dialog.infobox(
+                """Script stops as it didn't find required binaries.
+
+Please, check that listed binaries are installed within $PATH:
+        {0}""".format(self.binaries),
+                title="Required binaries not found...",
                 width=50
                 )
             time.sleep(5)
