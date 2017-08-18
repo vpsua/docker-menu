@@ -57,8 +57,6 @@ class DockerDialog(object):
                     exists = 1
             if exists == 0:
                 self.dialog_exit(manually="binary")
-
-
         return None
 
     def dialog_exit(self, manually=False):
