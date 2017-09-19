@@ -4,6 +4,7 @@ import time
 import re
 import os
 import tarfile
+import json
 from urllib2 import urlopen
 from urllib import urlretrieve
 from urlparse import urljoin
@@ -277,6 +278,50 @@ Please, contact support or try run script one more time with the command:
         except (KeyboardInterrupt):
             self.dialog_exit(manually=True)
 
+    def get_version(self, app):
+        """
+        Function, that retrieves available tags for docker application
+        Application should be passed as an app argument and should be valid docker image name
+        Returns True if selection was successfull, False if some exception occured.
+        """
+        try:
+            self.dialog.infobox("Loading list of available versions", title="Loading...", height=5)
+            try:
+                # Retrieving available tags from dockerhub
+                app_versions = json.load(
+                    urlopen(
+                        "https://registry.hub.docker.com/v1/repositories/{0}/tags".format(app)
+                    )
+                )
+                # Generating list of tuples, as required for docker treeview widget
+                dialog_tree = [
+                    (
+                        ver['name'],
+                        ver['name'],
+                        0 if ver['name'] != 'latest' else 1,
+                        len(ver['name'].split('.'))-1
+                    )
+                    for ver in app_versions
+                ]
+                # Show user version tree
+                exit_code, tag = self.dialog.treeview(
+                    "Please, select version from the list below",
+                    nodes=dialog_tree
+                )
+                if exit_code == self.dialog.OK:
+                    self.vars.update({app: tag})
+                    return True
+                else:
+                    self.vars.update({app: "latest"})
+                    return False
+
+            except:
+                self.vars.update({app: "latest"})
+                return False
+        except KeyboardInterrupt:
+            self.dialog_exit(manually=True)
+        return True
+
     def app_window(self):
         """
         This window is used to select category and application
@@ -352,9 +397,29 @@ Please, contact support or try run script one more time with the command:
         # self.main_window()
 
     def variables_input(self):
-        # checking if we have vars, that needs to be fullfield by the user
+        """
+        Function-stage, to collect following information from user:
+            - software versions to install
+            - some custom variables (ports, passwords, etc)
+
+        Returns "ok" if everything retrieved successfull, "cancel" if not
+        """
+        # Checking if version can be specified by user     
+        if "version" in self.config[self.category]['options'][self.template]:
+            # Asking user if he wants to select version
+            if self.dialog.yesno(
+                    """Do you want to select version of {0}?
+Latest version will be installed by default""".format(",".join([app for app in self.config[self.category]['options'][self.template]['version']])),
+                    width=50
+            ) == self.dialog.DIALOG_OK:
+                # As he want, we're iterating over available applications to setup versions
+                for application in self.config[self.category]['options'][self.template]['version']:
+                    self.get_version(application)
+            else:
+                # As he doesn't want, we fullfill information with the "latest" version
+                self.vars.update({app: "latest" for app in self.config[self.category]['options'][self.template]})
         exit_code = []
-        print self.config
+        # checking if we have vars, that needs to be fullfield by the user
         if "vars" in self.config[self.category]['options'][self.template]:
             for variable in self.config[self.category]['options'][self.template]['vars']:
                 exit_code.append(self.get_variable(variable))

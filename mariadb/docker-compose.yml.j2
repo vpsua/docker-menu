@@ -1,5 +1,5 @@
 mariadb:
-  image: mariadb:latest
+  image: mariadb:{{ mariadb }}
   volumes:
     - ./datadir:/var/lib/mysql
   ports:

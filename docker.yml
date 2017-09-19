@@ -150,6 +150,8 @@ Databases:
         - MARIADB_PORT
         - MARIADB_ROOT_PASSWORD
         - PHPMYADMIN_PORT
+      version:
+        - 'mariadb'
 
     mysql:
       urls:
@@ -171,6 +173,8 @@ Databases:
       vars:
         - POSTGRES_PASSWORD
         - PHPPGADMIN_PORT
+      version:
+        - 'postgres'
 
     cassandra:
       urls:
