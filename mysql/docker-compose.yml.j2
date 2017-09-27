@@ -1,5 +1,5 @@
-mariadb:
-  image: mysql:latest
+OBmariadb:
+  image: mysql:{{ mysql }}
   volumes:
     - ./datadir:/var/lib/mysql
   ports:

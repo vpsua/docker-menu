@@ -299,7 +299,7 @@ Please, contact support or try run script one more time with the command:
                         ver['name'],
                         ver['name'],
                         0 if ver['name'] != 'latest' else 1,
-                        len(ver['name'].split('.'))-1
+                        len(re.split(r'\.|\-', ver['name']))-1
                     )
                     for ver in app_versions
                 ]

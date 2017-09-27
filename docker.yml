@@ -30,7 +30,7 @@ Development:
       urls:
         - 'redmine/docker-compose.yml.j2'
         - 'redmine/my.cnf'
-        - 'redmine/Dockerfile'
+        - 'redmine/Dockerfile.j2'
         - 'redmine/innodb_row_format.rb'
       desc: 'Basic Redmine CRM with Passenger'
       dirs:
@@ -39,6 +39,8 @@ Development:
         - 'MYSQL_ROOT_PASSWORD'
         - 'REDMINE_PORT'
       help: 'redmine/README'
+      version:
+        - 'redmine'
 
     jenkins:
       urls:
@@ -49,6 +51,8 @@ Development:
       dirs:
         - 'jenkins_home'
       help: 'jenkins/README'
+      version:
+        - 'jenkins'
 
   description: "Here you may find tools, which are used for work management, like Redmine, Jenkins, etc."
 
@@ -63,6 +67,7 @@ CMS:
         - 'public_html'
       vars:
         - 'MYSQL_ROOT_PASSWORD'
+      help: 'wordpress/README'
 
     joomla:
       urls:
@@ -163,6 +168,8 @@ Databases:
         - MYSQL_PORT
         - MYSQL_ROOT_PASSWORD
         - PHPMYADMIN_PORT
+      version:
+        - 'mysql'
 
     postgres:
       urls:
@@ -193,6 +200,8 @@ Databases:
       dirs: 'datadir'
       vars:
         - 'MONGOEXPRESS_PORT'
+      version:
+        - 'mongo'
 
     redis:
       urls:
@@ -202,5 +211,7 @@ Databases:
       vars:
         - 'PHPREDMIN_PORT'
       help: 'redis/README'
+      version:
+        - 'redis'
 
   description: "Templates with different database engines"

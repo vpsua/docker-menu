@@ -10,7 +10,7 @@ services:
             - redis
         restart: unless-stopped
     redis:
-        image: redis
+        image: redis:{{ redis }}
         volumes:
           - ./datadir:/data
         ports:

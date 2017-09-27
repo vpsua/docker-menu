@@ -1,5 +1,5 @@
 jenkins:
-  image: jenkins
+  image: jenkins:{{ jenkins }}
   ports:
     - {{ JENKINS_PORT }}:8080
     - 50000:50000
